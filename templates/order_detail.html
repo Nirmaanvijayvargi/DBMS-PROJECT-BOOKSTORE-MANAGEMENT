@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% block body %}
+{% set st = o.status %}
+<div class="head"><div><h1>Order #{{ o.order_id }} <span class="badge b-{{ st }}">{{ st }}</span></h1><p>{{ o.order_date|dmy }} &middot; <a href="{{ url_for('customer_detail', cid=c.customer_id) }}">{{ c.name }}</a></p></div>
+ <div>{% if inv %}<a class="btn ghost" href="{{ url_for('invoice', oid=o.order_id) }}" target="_blank">View invoice</a>{% endif %}
+ {% if st=='Placed' %}<form class="inline" method="post" action="{{ url_for('order_cancel', oid=o.order_id) }}" onsubmit="return confirm('Cancel this order and refund the payment?')"><button class="btn danger">Cancel order</button></form>{% endif %}</div></div>
+{% if st!='Cancelled' %}<div class="steps"><div class="step done">1 Placed &amp; paid</div><div class="step {{ 'done' if st in ('Shipped','Delivered') }}">2 Shipped</div><div class="step {{ 'done' if st=='Delivered' }}">3 Delivered</div></div>{% endif %}
+<div class="card"><h2>Items</h2><div class="scroll"><table><tr><th>Title</th><th>Format</th><th class="num">Price</th><th class="num">Qty</th><th class="num">Line total</th><th class="num">Returned</th></tr>
+{% for i in items %}<tr><td>{{ i.title }}</td><td>{{ i.format }}</td><td class="num">{{ i.unit_price|inr }}</td><td class="num">{{ i.quantity }}</td><td class="num">{{ i.line_total|inr }}</td><td class="num">{{ i.returned }}</td></tr>{% endfor %}
+<tr><td colspan="4" class="num"><b>Total</b></td><td class="num"><b>{{ o.total_amount|inr }}</b></td><td></td></tr></table></div></div>
+<div class="grid g2">
+ <div class="card"><h2>Payment</h2>{% if pay %}<p><span class="badge b-{{ pay.status }}">{{ pay.status }}</span> {{ pay.amount|inr }} via {{ pay.method }} on {{ pay.paid_at|dmy }}</p>{% endif %}
+  {% if inv %}<p class="muted">Invoice {{ inv.invoice_no }}</p>{% endif %}</div>
+ <div class="card"><h2>Shipment</h2>
+  {% if ship %}<p>{{ ship.carrier }} &middot; tracking <b>{{ ship.tracking_no }}</b><br>Shipped {{ ship.shipped_date|dmy }} &middot; Delivered {{ ship.delivered_date|dmy }}</p>
+   {% if st=='Shipped' %}<form method="post" action="{{ url_for('order_deliver', oid=o.order_id) }}"><button class="btn">Mark delivered today</button></form>{% endif %}
+  {% elif st=='Placed' %}<form method="post" action="{{ url_for('order_ship', oid=o.order_id) }}" class="fgrid"><div><label>Carrier</label><input name="carrier" value="BlueDart" required></div><div><label>Tracking no.</label><input name="tracking_no" required></div><div class="span2"><button class="btn">Create shipment</button></div></form>
+  {% else %}<p class="muted">{{ 'No shipment (digital-only order).' if st=='Delivered' else 'Not applicable.' }}</p>{% endif %}</div>
+</div>
+{% if st=='Delivered' %}<div class="card"><h2>Record a return</h2><p class="muted small">Rules enforced by the database: only after delivery, within 30 days, never for digital books, never more than purchased.</p>
+<form method="post" action="{{ url_for('order_return', oid=o.order_id) }}" class="fgrid">
+ <div><label>Item</label><select name="order_item_id">{% for i in items %}<option value="{{ i.order_item_id }}">{{ i.title }} ({{ i.format }}) - bought {{ i.quantity }}, returned {{ i.returned }}</option>{% endfor %}</select></div>
+ <div><label>Quantity</label><input type="number" name="quantity" min="1" value="1" required></div>
+ <div class="span2"><label>Reason</label><input name="reason" required minlength="3" maxlength="200"></div>
+ <div><button class="btn">Submit return</button></div></form></div>{% endif %}{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block body %}
+<div class="head"><div><h1>Categories &amp; Publishers</h1><p>Reference lists used by the catalogue. Authors are created automatically when you add a book.</p></div></div>
+<div class="grid g2">
+ <div class="card"><h2>Categories</h2><form method="post" class="bar"><input type="hidden" name="kind" value="category"><div><input name="name" placeholder="New category" required maxlength="60"></div><div class="fit"><button class="btn">Add</button></div></form>
+ <table><tr><th>Name</th><th class="num">Books</th></tr>{% for c in cats %}<tr><td>{{ c.name }}</td><td class="num">{{ c.n }}</td></tr>{% endfor %}</table></div>
+ <div class="card"><h2>Publishers</h2><form method="post" class="bar"><input type="hidden" name="kind" value="publisher"><div><input name="name" placeholder="New publisher" required maxlength="100"></div><div class="fit"><button class="btn">Add</button></div></form>
+ <table><tr><th>Name</th><th class="num">Editions</th></tr>{% for p in pubs %}<tr><td>{{ p.name }}</td><td class="num">{{ p.n }}</td></tr>{% endfor %}</table></div>
+</div>{% endblock %}

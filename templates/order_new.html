@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% block body %}
+<div class="head"><div><h1>New order</h1><p>Pick a customer, add books, choose how they pay. Stock is checked by the database.</p></div></div>
+<form method="post" id="f" class="card">
+ <div class="fgrid" style="margin-bottom:18px">
+  <div><label>Customer *</label><select name="customer_id" required><option value="">Choose...</option>{% for c in custs %}<option value="{{ c.customer_id }}">{{ c.name }} ({{ c.email }})</option>{% endfor %}</select></div>
+  <div><label>Payment method *</label><select name="method" required><option value="">Choose...</option>{% for m in METHODS %}<option>{{ m }}</option>{% endfor %}</select></div>
+ </div>
+ <h2>Items</h2><div id="rows"></div>
+ <button type="button" class="btn ghost sm" onclick="addRow()">+ Add another book</button>
+ <p class="total">Total: <span id="total">&#8377;0.00</span></p>
+ <button class="btn">Place order &amp; take payment</button> <a class="btn ghost" href="{{ url_for('orders') }}">Cancel</a>
+</form>
+<template id="tpl"><div class="cartrow">
+ <select name="edition_id" onchange="calc()"><option value="" data-p="0">Choose a book...</option>
+ {% for e in eds %}<option value="{{ e.edition_id }}" data-p="{{ e.price }}" data-s="{{ e.stock_qty }}" data-d="{{ 1 if e.format=='Digital' else 0 }}">{{ e.title }} - {{ e.format }} ({{ '\u20b9%.2f'|format(e.price) }}{{ '' if e.format=='Digital' else ', ' ~ e.stock_qty ~ ' in stock' }})</option>{% endfor %}</select>
+ <input name="qty" type="number" min="1" value="1" oninput="calc()"><span class="num line">&#8377;0.00</span>
+ <button type="button" class="btn sm danger" onclick="this.parentNode.remove();calc()">&times;</button></div></template>
+<script>
+const rows=document.getElementById('rows'),tpl=document.getElementById('tpl');
+function addRow(){rows.appendChild(tpl.content.cloneNode(true));calc()}
+function calc(){let t=0;rows.querySelectorAll('.cartrow').forEach(r=>{const o=r.querySelector('select').selectedOptions[0],q=+r.querySelector('input').value||0,p=+o.dataset.p||0;
+ const l=p*q;t+=l;r.querySelector('.line').textContent='\u20b9'+l.toFixed(2);
+ const lim=o.dataset.d==='0'&&o.dataset.s?+o.dataset.s:null;r.querySelector('input').max=lim||'';});
+ document.getElementById('total').textContent='\u20b9'+t.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
+addRow();
+</script>{% endblock %}

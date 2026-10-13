@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block body %}
+<div class="head"><div><h1>{{ 'Edit edition' if edit else 'Add edition' }}</h1><p>A book can have several editions (paperback, hardcover, digital), each with its own ISBN and price.</p></div></div>
+<form class="card" method="post" novalidate><div class="fgrid">
+ <div class="span2"><label>Title *</label><input name="title" value="{{ v.title or '' }}" maxlength="200" required></div>
+ <div class="span2"><label>Author(s) * <span class="muted" style="text-transform:none">- separate several with commas</span></label><input name="authors" value="{{ v.authors if v.authors is string else '' }}" required></div>
+ <div><label>Category *</label><select name="category_id" required><option value="">Choose...</option>{% for c in cats %}<option value="{{ c.category_id }}" {{ 'selected' if v.category_id|string==c.category_id|string }}>{{ c.name }}</option>{% endfor %}</select></div>
+ <div><label>Publisher *</label><select name="publisher_id" required><option value="">Choose...</option>{% for p in pubs %}<option value="{{ p.publisher_id }}" {{ 'selected' if v.publisher_id|string==p.publisher_id|string }}>{{ p.name }}</option>{% endfor %}</select></div>
+ <div><label>ISBN (10 or 13 digits) *</label><input name="isbn" value="{{ v.isbn or '' }}" required placeholder="978..."></div>
+ <div><label>Format *</label><select name="format">{% for f in FORMATS %}<option {{ 'selected' if v.format==f }}>{{ f }}</option>{% endfor %}</select></div>
+ <div><label>Edition no. *</label><input name="edition_no" type="number" min="1" max="99" value="{{ v.edition_no }}"></div>
+ <div><label>Year published *</label><input name="pub_year" type="number" min="1450" value="{{ v.pub_year }}"></div>
+ <div><label>Price (INR) *</label><input name="price" type="number" step="0.01" min="0.01" value="{{ v.price }}" required></div>
+ <div><label>Stock on hand *</label><input name="stock_qty" type="number" min="0" value="{{ v.stock_qty }}"></div>
+ <div><label>Reorder level</label><input name="reorder_level" type="number" min="0" value="{{ v.reorder_level }}"></div>
+</div><p style="margin:18px 0 0"><button class="btn">{{ 'Save changes' if edit else 'Add to catalogue' }}</button> <a class="btn ghost" href="{{ url_for('books') }}">Cancel</a></p></form>{% endblock %}

@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8"><title>{{ inv.invoice_no }}</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body style="display:block"><div class="inv">
+<div class="noprint" style="text-align:right"><button class="btn" onclick="print()">Print / Save as PDF</button></div>
+<h1>INVOICE</h1><p class="muted">Pagewise Bookstore<br>Invoice no. <b>{{ inv.invoice_no }}</b> &middot; {{ inv.issued_at|dmy }}</p>
+<p><b>Billed to</b><br>{{ c.name }}<br>{{ c.address }}<br>{{ c.email }} &middot; {{ c.phone }}</p>
+<table><tr><th>Item</th><th>ISBN</th><th class="num">Price</th><th class="num">Qty</th><th class="num">Amount</th></tr>
+{% for i in items %}<tr><td>{{ i.title }} ({{ i.format }})</td><td class="small">{{ i.isbn }}</td><td class="num">{{ i.unit_price|inr }}</td><td class="num">{{ i.quantity }}</td><td class="num">{{ i.line_total|inr }}</td></tr>{% endfor %}
+<tr><td colspan="4" class="num"><b>Grand total</b></td><td class="num"><b>{{ o.total_amount|inr }}</b></td></tr></table>
+<p>Payment: <b>{{ pay.status }}</b> via {{ pay.method }} on {{ pay.paid_at|dmy }}</p><p class="muted small">Thank you for shopping with us.</p></div></body></html>

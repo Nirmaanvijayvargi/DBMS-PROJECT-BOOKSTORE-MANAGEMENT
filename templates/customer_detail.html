@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block body %}
+<div class="head"><div><h1>{{ c.name }}</h1><p>{{ c.email }} &middot; {{ c.phone }}<br>{{ c.address }}</p></div>
+<a class="btn ghost" href="{{ url_for('customer_edit', cid=c.customer_id) }}">Edit</a></div>
+<div class="card"><h2>Order history</h2><div class="scroll"><table><tr><th>#</th><th>Date</th><th>Status</th><th class="num">Units</th><th class="num">Total</th></tr>
+{% for o in orders %}<tr><td><a href="{{ url_for('order_detail', oid=o.order_id) }}">#{{ o.order_id }}</a></td><td>{{ o.order_date|dmy }}</td><td><span class="badge b-{{ o.status }}">{{ o.status }}</span></td><td class="num">{{ o.units }}</td><td class="num">{{ o.total_amount|inr }}</td></tr>
+{% else %}<tr><td colspan="5" class="empty">No orders yet.</td></tr>{% endfor %}</table></div></div>{% endblock %}

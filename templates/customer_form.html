@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block body %}
+<div class="head"><h1>{{ 'Edit customer' if edit else 'Add customer' }}</h1></div>
+<form class="card" method="post" novalidate><div class="fgrid">
+ <div><label>Full name *</label><input name="name" value="{{ v.name or '' }}" maxlength="100" required></div>
+ <div><label>Email *</label><input name="email" type="email" value="{{ v.email or '' }}" required></div>
+ <div><label>Phone (10-14 digits) *</label><input name="phone" value="{{ v.phone or '' }}" required></div>
+ <div class="span2"><label>Delivery address *</label><textarea name="address" rows="2" required>{{ v.address or '' }}</textarea></div>
+</div><p style="margin:18px 0 0"><button class="btn">Save</button> <a class="btn ghost" href="{{ url_for('customers') }}">Cancel</a></p></form>{% endblock %}

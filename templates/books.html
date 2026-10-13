@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block body %}
+<div class="head"><div><h1>Catalogue</h1><p>Every sellable edition, one row per ISBN</p></div><a class="btn" href="{{ url_for('book_new') }}">+ Add edition</a></div>
+<form class="card bar" method="get">
+ <div style="flex:2"><label>Search title, author or ISBN</label><input name="q" value="{{ q }}" placeholder="e.g. Sapiens, Kalam, 9780..."></div>
+ <div><label>Category</label><select name="category"><option value="">All</option>{% for c in cats %}<option value="{{ c.category_id }}" {{ 'selected' if cat|string==c.category_id|string }}>{{ c.name }}</option>{% endfor %}</select></div>
+ <div><label>Format</label><select name="format"><option value="">All</option>{% for f in FORMATS %}<option {{ 'selected' if fmt==f }}>{{ f }}</option>{% endfor %}</select></div>
+ <div class="fit"><button class="btn">Search</button> <a class="btn ghost" href="{{ url_for('books') }}">Clear</a></div>
+</form>
+<div class="card scroll"><table>
+<tr><th>Title</th><th>Author(s)</th><th>Category</th><th>ISBN</th><th>Format</th><th class="num">Price</th><th class="num">Stock</th><th>Adjust stock</th><th></th></tr>
+{% for r in rows %}<tr>
+ <td><b>{{ r.title }}</b><div class="muted small">{{ r.publisher }} &middot; ed. {{ r.edition_no }}, {{ r.pub_year }}</div></td>
+ <td>{{ r.authors }}</td><td>{{ r.category }}</td><td class="small">{{ r.isbn }}</td>
+ <td><span class="badge b-{{ r.format }}">{{ r.format }}</span></td><td class="num">{{ r.price|inr }}</td>
+ <td class="num">{% if r.format=='Digital' %}<span class="muted">n/a</span>{% else %}<span class="badge b-{{ 'OUT' if r.stock_qty==0 else ('LOW' if r.stock_qty<=r.reorder_level else 'OK') }}">{{ r.stock_qty }}</span>{% endif %}</td>
+ <td>{% if r.format!='Digital' %}<form class="stockform" method="post" action="{{ url_for('stock_update', eid=r.edition_id) }}"><input name="delta" type="number" placeholder="+/-" required><button class="btn sm ghost">Apply</button></form>{% endif %}</td>
+ <td style="white-space:nowrap"><a class="btn sm ghost" href="{{ url_for('book_edit', eid=r.edition_id) }}">Edit</a>
+  <form class="inline" method="post" action="{{ url_for('book_delete', eid=r.edition_id) }}" onsubmit="return confirm('Delete this edition?')"><button class="btn sm danger">Delete</button></form></td>
+</tr>{% else %}<tr><td colspan="9" class="empty">No books match your search.</td></tr>{% endfor %}</table></div>
+<p class="muted small">{{ rows|length }} edition(s) shown. Stock badge: red = out, amber = at or below reorder level.</p>{% endblock %}

@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block body %}
+<div class="head"><div><h1>Returns</h1><p>Record returns from an order's page once it is delivered</p></div></div>
+<div class="card scroll"><table><tr><th>Return</th><th>Date</th><th>Order</th><th>Customer</th><th>Title</th><th class="num">Qty</th><th>Reason</th><th class="num">Refund</th></tr>
+{% for r in rows %}<tr><td>#{{ r.return_id }}</td><td>{{ r.return_date|dmy }}</td><td><a href="{{ url_for('order_detail', oid=r.order_id) }}">#{{ r.order_id }}</a></td><td>{{ r.customer_name }}</td><td>{{ r.title }}</td><td class="num">{{ r.quantity }}</td><td>{{ r.reason }}</td><td class="num">{{ r.refund_amount|inr }}</td></tr>
+{% else %}<tr><td colspan="8" class="empty">No returns recorded.</td></tr>{% endfor %}</table></div>{% endblock %}

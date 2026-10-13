@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block body %}
+<div class="head"><div><h1>Orders</h1><p>Place, ship, deliver and track</p></div><a class="btn" href="{{ url_for('order_new') }}">+ New order</a></div>
+<form class="card bar" method="get"><div style="flex:2"><label>Customer name or order #</label><input name="q" value="{{ q }}"></div>
+ <div><label>Status</label><select name="status"><option value="">All</option>{% for s in ['Placed','Shipped','Delivered','Cancelled'] %}<option {{ 'selected' if status==s }}>{{ s }}</option>{% endfor %}</select></div>
+ <div class="fit"><button class="btn">Filter</button> <a class="btn ghost" href="{{ url_for('orders') }}">Clear</a></div></form>
+<div class="card scroll"><table><tr><th>#</th><th>Date</th><th>Customer</th><th>Status</th><th class="num">Units</th><th class="num">Total</th></tr>
+{% for o in rows %}<tr><td><a href="{{ url_for('order_detail', oid=o.order_id) }}"><b>#{{ o.order_id }}</b></a></td><td>{{ o.order_date|dmy }}</td><td>{{ o.customer_name }}</td>
+<td><span class="badge b-{{ o.status }}">{{ o.status }}</span></td><td class="num">{{ o.units }}</td><td class="num">{{ o.total_amount|inr }}</td></tr>
+{% else %}<tr><td colspan="6" class="empty">No orders match.</td></tr>{% endfor %}</table></div>{% endblock %}

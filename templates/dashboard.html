@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block body %}
+<div class="head"><div><h1>Dashboard</h1><p>Today at a glance</p></div><a class="btn" href="{{ url_for('order_new') }}">+ New order</a></div>
+<div class="grid g4" style="margin-bottom:18px">
+ <div class="card kpi"><span>Revenue</span><b>{{ s.revenue|inr }}</b></div>
+ <div class="card kpi"><span>Orders</span><b>{{ s.orders }}</b></div>
+ <div class="card kpi"><span>Titles / Editions</span><b>{{ s.titles }} / {{ s.editions }}</b></div>
+ <div class="card kpi"><span>Customers</span><b>{{ s.customers }}</b></div>
+ <div class="card kpi {{ 'alert' if s.to_ship }}"><span>Waiting to ship</span><b>{{ s.to_ship }}</b></div>
+ <div class="card kpi {{ 'alert' if s.low }}"><span>Low / out of stock</span><b>{{ s.low }}</b></div>
+</div>
+<div class="grid g2">
+ <div class="card"><h2>Recent orders</h2><div class="scroll"><table><tr><th>#</th><th>Customer</th><th>Status</th><th class="num">Total</th></tr>
+ {% for o in recent %}<tr><td><a href="{{ url_for('order_detail', oid=o.order_id) }}">#{{ o.order_id }}</a></td><td>{{ o.customer_name }}</td><td><span class="badge b-{{ o.status }}">{{ o.status }}</span></td><td class="num">{{ o.total_amount|inr }}</td></tr>
+ {% else %}<tr><td colspan="4" class="empty">No orders yet</td></tr>{% endfor %}</table></div></div>
+ <div class="card"><h2>Needs restocking</h2><div class="scroll"><table><tr><th>Title</th><th>Format</th><th class="num">Left</th><th>Status</th></tr>
+ {% for r in low %}<tr><td>{{ r.title }}</td><td>{{ r.format }}</td><td class="num">{{ r.stock_qty }}</td><td><span class="badge b-{{ r.stock_status }}">{{ r.stock_status }}</span></td></tr>
+ {% else %}<tr><td colspan="4" class="empty">Everything is well stocked</td></tr>{% endfor %}</table></div></div>
+</div>{% endblock %}

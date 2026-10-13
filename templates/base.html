@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Bookstore Manager{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head><body>
+<nav class="side">
+ <div class="logo">Pagewise<small>Bookstore manager</small></div>
+ {% for key,label,ep in [('dashboard','Dashboard','index'),('books','Catalogue','books'),('orders','Orders','orders'),('returns','Returns','returns'),('customers','Customers','customers'),('reports','Reports','reports'),('masters','Categories & Publishers','masters')] %}
+ <a href="{{ url_for(ep) }}" class="{{ 'on' if page==key }}">{{ label }}</a>{% endfor %}
+</nav>
+<main>
+ {% with msgs = get_flashed_messages(with_categories=true) %}{% for cat,m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}{% endwith %}
+ {% if body_404 %}<div class="card empty"><h2>Page not found</h2><a href="{{ url_for('index') }}">Back to dashboard</a></div>{% endif %}
+ {% block body %}{% endblock %}
+</main></body></html>

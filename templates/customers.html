@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block body %}
+<div class="head"><div><h1>Customers</h1><p>Search, add and review purchase history</p></div><a class="btn" href="{{ url_for('customer_new') }}">+ Add customer</a></div>
+<form class="card bar" method="get"><div style="flex:3"><label>Search name, email or phone</label><input name="q" value="{{ q }}"></div>
+ <div class="fit"><button class="btn">Search</button> <a class="btn ghost" href="{{ url_for('customers') }}">Clear</a></div></form>
+<div class="card scroll"><table><tr><th>Name</th><th>Email</th><th>Phone</th><th class="num">Orders</th><th class="num">Total spent</th><th>Last order</th><th></th></tr>
+{% for c in rows %}<tr><td><a href="{{ url_for('customer_detail', cid=c.customer_id) }}"><b>{{ c.name }}</b></a></td><td>{{ c.email }}</td><td>{{ c.phone }}</td>
+<td class="num">{{ c.orders_placed }}</td><td class="num">{{ c.total_spent|inr }}</td><td>{{ c.last_order|dmy }}</td>
+<td style="white-space:nowrap"><a class="btn sm ghost" href="{{ url_for('customer_edit', cid=c.customer_id) }}">Edit</a>
+<form class="inline" method="post" action="{{ url_for('customer_delete', cid=c.customer_id) }}" onsubmit="return confirm('Delete this customer?')"><button class="btn sm danger">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="7" class="empty">No customers found.</td></tr>{% endfor %}</table></div>{% endblock %}
